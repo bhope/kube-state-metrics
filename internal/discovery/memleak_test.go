@@ -134,7 +134,7 @@ func TestMemoryLeakSimulation(t *testing.T) {
 		t.Errorf("[fixed] expected exactly %d stop channels (stable), got %d", numGVKs, fixedChannelCount)
 	}
 
-	buggyGrowth := int64(heapAfterBuggy) - int64(heapBefore) //nolint:gosec
+	buggyGrowth := int64(heapAfterBuggy) - int64(heapBefore)      //nolint:gosec
 	fixedGrowth := int64(heapAfterFixed) - int64(heapBeforeFixed) //nolint:gosec
 	if buggyGrowth > 0 && fixedGrowth >= buggyGrowth {
 		t.Errorf("fixed heap growth (%d KB) should be less than buggy growth (%d KB)", fixedGrowth, buggyGrowth)
