@@ -84,8 +84,19 @@ func (r *CRDiscoverer) AppendToMap(gvkps ...groupVersionKindPlural) {
 		if _, ok := r.Map[gvkp.Group][gvkp.Version]; !ok {
 			r.Map[gvkp.Group][gvkp.Version] = []kindPlural{}
 		}
-		r.Map[gvkp.Group][gvkp.Version] = append(r.Map[gvkp.Group][gvkp.Version], kindPlural{Kind: gvkp.Kind, Plural: gvkp.Plural})
-		r.GVKToReflectorStopChanMap[gvkp.GroupVersionKind.String()] = make(chan struct{})
+		alreadyExists := false
+		for _, existing := range r.Map[gvkp.Group][gvkp.Version] {
+			if existing.Kind == gvkp.Kind {
+				alreadyExists = true
+				break
+			}
+		}
+		if !alreadyExists {
+			r.Map[gvkp.Group][gvkp.Version] = append(r.Map[gvkp.Group][gvkp.Version], kindPlural{Kind: gvkp.Kind, Plural: gvkp.Plural})
+		}
+		if _, exists := r.GVKToReflectorStopChanMap[gvkp.GroupVersionKind.String()]; !exists {
+			r.GVKToReflectorStopChanMap[gvkp.GroupVersionKind.String()] = make(chan struct{})
+		}
 	}
 }
 
